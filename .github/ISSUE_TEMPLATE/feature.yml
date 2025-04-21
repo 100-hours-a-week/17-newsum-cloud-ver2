@@ -14,9 +14,9 @@ body:
       label: ✅ 작업할 내용
       description: 할 일을 체크박스 형태로 작성해주세요.
       placeholder: |
-      아래 내용을 복사해서 체크 박스 만들고 작성해주세요
         - [ ] 할일 1
         - [ ] 할일 2
+        위 내용을 복사해서 체크 박스 만들고 작성해주세요
     validations:
       required: true
   - type: textarea
