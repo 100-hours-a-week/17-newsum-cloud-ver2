@@ -14,6 +14,9 @@ body:
       label: ✅ 작업할 내용
       description: 할 일을 체크박스 형태로 작성해주세요.
       placeholder: 최대한 세분화 해서 적어주세요!
+      default: |
+        - [ ] 할일 1
+        - [ ] 할일 2
     validations:
       required: true
   - type: textarea
