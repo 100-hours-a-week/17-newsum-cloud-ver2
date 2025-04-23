@@ -1,7 +1,7 @@
 name: "📋 상위 이슈 생성"
 description: "상위 이슈 생성 템플릿입니다."
 labels: ["parent-issue", "CL"]
-projects: ["17-newsum-ver2"]
+projects: ["17-newsum-ver2", "newsum-cloud"]
 body:
   - type: textarea
     attributes:
