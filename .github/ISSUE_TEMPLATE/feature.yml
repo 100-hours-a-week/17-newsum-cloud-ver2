@@ -19,6 +19,6 @@ body:
       required: true
   - type: textarea
     attributes:
-      label: 🙋🏻 참고 링크
+      label: 🙋🏻 참고 자료
       description: 이해를 돕기 위한 추가적인 자료가 있다면 첨부하여 주세요.
-      placeholder: 링크나, 이미지 파일 뭐든 가능합니다.
+      placeholder: 없다면 비워두셔도 됩니다.
