@@ -6,4 +6,5 @@ body:
     attributes:
       label: 📄 설명
       description: 하위 이슈에 대한 설명을 작성해주세요.
+      해당 과정에 흐름에 대해 정리한 문서 있으면 굳
       placeholder: 작성하고 싶은 내용이 있다면 작성해주시면 됩니다.
