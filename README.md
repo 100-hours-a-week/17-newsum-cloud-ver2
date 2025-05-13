@@ -1,5 +1,3 @@
 # 17-newsum-cloud_
 
-hi
-g
-good
+17팀 클라우드 레포
