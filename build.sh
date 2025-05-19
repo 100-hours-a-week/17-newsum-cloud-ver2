@@ -96,6 +96,33 @@ EOF
   curl -H "Content-Type: application/json" -d "$payload" "$DISCORD_WEBHOOK_URL"
 }
 
+# git 저장소 관련 공통 함수
+update_repo() {
+  local repo_path="$1"
+  local repo_name="$2"
+  local repo_url="$3"
+  
+  # 디렉토리가 이미 존재하면 pull만, 없으면 clone
+  if [ -d "$repo_path/.git" ]; then
+    cd "$repo_path"
+    log "${repo_name} 저장소 업데이트 중..."
+    git pull origin dev
+    
+    # 변경사항이 없으면 빌드 건너뛰기
+    if [ "$?" -eq 0 ]; then
+      log "${repo_name} 저장소에 변경사항이 없습니다. 빌드를 건너뜁니다."
+      return 0
+    fi
+  else
+    log "${repo_name} 저장소 클론 중..."
+    git clone "$repo_url" "$repo_path"
+  fi
+  
+  # 디렉토리로 이동
+  cd "$repo_path"
+  return 0
+}
+
 # 1. 프론트엔드 빌드
 build_fe() {
   log "프론트엔드 빌드 시작..."
@@ -104,26 +131,10 @@ build_fe() {
   monitor_resources "프론트엔드 빌드 전"
 
   # 프론트엔드 코드 가져오기
-  cd "$VM_NewSum_PATH"
-  
-  # 디렉토리가 이미 존재하면 pull만, 없으면 clone
-  if [ -d "17-newsum-fe/.git" ]; then
-    cd "17-newsum-fe"
-    log "프론트엔드 저장소 업데이트 중..."
-    git pull origin dev
-    
-    # 변경사항이 없으면 빌드 건너뛰기
-    if [ "$?" -eq 0 ]; then
-      log "프론트엔드 저장소에 변경사항이 없습니다. 빌드를 건너뜁니다."
-      return 0
-    fi
-  else
-    log "프론트엔드 저장소 클론 중..."
-    git clone "$GIT_REPO_URL_FE"
+  update_repo "$VM_NewSum_PATH/17-newsum-fe" "프론트엔드" "$GIT_REPO_URL_FE"
+  if [ $? -ne 0 ]; then
+    return 1
   fi
-  
-  # 프론트엔드 디렉토리로 이동
-  cd "$VM_NewSum_PATH/17-newsum-fe"
 
   # 의존성 설치
   log "프론트엔드 의존성 설치 중..."
@@ -152,28 +163,13 @@ build_be() {
   monitor_resources "백엔드 빌드 전"
 
   # 백엔드 코드 가져오기
-  cd "$VM_NewSum_PATH"
-  
-  # 디렉토리가 이미 존재하면 pull만, 없으면 clone
-  if [ -d "17-newsum-be/.git" ]; then
-    cd "17-newsum-be"
-    log "백엔드 저장소 업데이트 중..."
-    git pull origin dev
-    
-    # 변경사항이 없으면 빌드 건너뛰기
-    if [ "$?" -eq 0 ]; then
-      log "백엔드 저장소에 변경사항이 없습니다. 빌드를 건너뜁니다."
-      return 0
-    fi
-  else
-    log "백엔드 저장소 클론 중..."
-    git clone "$GIT_REPO_URL_BE"
+  update_repo "$VM_NewSum_PATH/17-newsum-be" "백엔드" "$GIT_REPO_URL_BE"
+  if [ $? -ne 0 ]; then
+    return 1
   fi
-  
-  # 백엔드 디렉토리로 이동
-  cd "$VM_NewSum_PATH/17-newsum-be"
 
   # 빌드
+  log "백엔드 빌드 중..."
   ./gradlew clean build -x test
   
   # 빌드 후 리소스 사용량 확인
@@ -190,26 +186,10 @@ build_ai() {
   monitor_resources "AI 빌드 전"
 
   # AI 코드 가져오기
-  cd "$VM_NewSum_PATH"
-  
-  # 디렉토리가 이미 존재하면 pull만, 없으면 clone
-  if [ -d "17-newsum-ai/.git" ]; then
-    cd "17-newsum-ai"
-    log "AI 저장소 업데이트 중..."
-    git pull origin dev
-    
-    # 변경사항이 없으면 빌드 건너뛰기
-    if [ "$?" -eq 0 ]; then
-      log "AI 저장소에 변경사항이 없습니다. 빌드를 건너뜁니다."
-      return 0
-    fi
-  else
-    log "AI 저장소 클론 중..."
-    git clone "$GIT_REPO_URL_AI"
+  update_repo "$VM_NewSum_PATH/17-newsum-ai" "AI" "$GIT_REPO_URL_AI"
+  if [ $? -ne 0 ]; then
+    return 1
   fi
-  
-  # AI 디렉토리로 이동
-  cd "$VM_NewSum_PATH/17-newsum-ai"
 
   # 가상 환경 생성 및 활성화
   if [ ! -d "$VM_AI_REPO_PATH/venv" ]; then
@@ -366,6 +346,30 @@ build_all() {
 
 # 메인 실행 함수
 main() {
+  # 저장소 업데이트
+  cd "$VM_NewSum_PATH"
+  
+  # 프론트엔드 저장소 업데이트
+  update_repo "$VM_NewSum_PATH/17-newsum-fe" "프론트엔드" "$GIT_REPO_URL_FE"
+  if [ $? -ne 0 ]; then
+    send_discord_alert "빌드 실패" "프론트엔드 저장소 업데이트 실패" 15158332
+    exit 1
+  fi
+  
+  # 백엔드 저장소 업데이트
+  update_repo "$VM_NewSum_PATH/17-newsum-be" "백엔드" "$GIT_REPO_URL_BE"
+  if [ $? -ne 0 ]; then
+    send_discord_alert "빌드 실패" "백엔드 저장소 업데이트 실패" 15158332
+    exit 1
+  fi
+  
+  # AI 저장소 업데이트
+  update_repo "$VM_NewSum_PATH/17-newsum-ai" "AI" "$GIT_REPO_URL_AI"
+  if [ $? -ne 0 ]; then
+    send_discord_alert "빌드 실패" "AI 저장소 업데이트 실패" 15158332
+    exit 1
+  fi
+
   # 인자가 없으면 전체 빌드
   if [ $# -eq 0 ]; then
     if build_all; then
