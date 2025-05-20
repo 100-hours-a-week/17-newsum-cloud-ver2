@@ -1,0 +1,63 @@
+name: "🐞 버그 리포트"
+description: "서비스에서 발견된 버그를 신고합니다."
+labels: ["bug"]
+body:
+  - type: textarea
+    attributes:
+      label: 버그 설명
+      description: 어떤 문제가 발생했는지 간단히 설명해주세요.
+      placeholder: 예시) 로그인 시도 시 500 에러가 발생합니다.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: 재현 방법 (Steps to Reproduce)
+      description: 버그를 어떻게 재현할 수 있는지 단계별로 설명해주세요.
+      placeholder: |
+        1. 로그인 페이지로 이동
+        2. 이메일/비밀번호 입력
+        3. 로그인 버튼 클릭
+        4. 500 에러 발생
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: 예상 동작 (Expected Behavior)
+      description: 원래 어떤 동작이 나와야 했는지 적어주세요.
+      placeholder: 예시) 정상적으로 메인 페이지로 이동해야 합니다.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: 실제 동작 (Actual Behavior)
+      description: 실제로 어떤 문제가 발생했는지 구체적으로 설명해주세요.
+      placeholder: 예시) 500 Internal Server Error가 발생합니다.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: 화면/로그/에러 메시지
+      description: 관련된 스크린샷, 콘솔 로그, 에러 메시지 등을 포함해주세요.
+      placeholder: 예시) 콘솔 로그, 브라우저 에러 메시지, 백엔드 로그 등
+    validations:
+      required: false
+
+  - type: input
+    attributes:
+      label: 환경 정보
+      description: 어떤 환경에서 문제가 발생했는지 적어주세요 (운영/개발, 브라우저/OS 등)
+      placeholder: 예시) 운영 환경, Chrome 125, macOS, API 서버
+    validations:
+      required: true
+
+  - type: input
+    attributes:
+      label: 관련 이슈 또는 PR
+      description: 관련된 이슈 번호나 PR 링크가 있다면 적어주세요.
+      placeholder: 예시) #24, PR #12
+    validations:
+      required: false
