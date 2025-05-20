@@ -1,6 +1,6 @@
 name: "🐞 버그 리포트"
 description: "서비스에서 발견된 버그를 신고합니다."
-labels: ["bug"]
+labels: ["bug", "CL"]
 body:
   - type: textarea
     attributes:
