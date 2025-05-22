@@ -1,0 +1,9 @@
+# config.sh는 Git에 포함시키지 마세요!
+config.sh
+
+build.sh
+copy-ssl.sh
+deploy-local.sh
+setup-gcp.sh
+upload-to-gcp.sh
+test
